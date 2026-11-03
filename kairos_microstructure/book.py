@@ -188,6 +188,22 @@ class LimitOrderBook:
                 break
         return [f for f in self.trades if f.order_id == order.id]
 
+    def modify(self, order_id: int, qty: float) -> Order:
+        """改量（cancel/replace）：保持原队列位置，``qty`` 小于等于 0 视为撤单。
+
+        真实交易所改价会丢失队列优先级，改量一般保留；这里只支持改量，
+        价格变动请撤单重下，语义更清楚。
+        """
+        order = self._find(order_id)
+        qty = float(qty)
+        if qty <= 0:
+            return self.cancel(order_id)
+        if qty <= order.filled_qty:
+            raise ValueError(
+                f"新数量 {qty} 必须大于已成交量 {order.filled_qty}")
+        order.qty = qty
+        return order
+
     def cancel(self, order_id: int) -> Order:
         """撤单并返回该订单。"""
         order = self._find(order_id)

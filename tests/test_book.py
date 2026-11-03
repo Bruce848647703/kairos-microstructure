@@ -98,3 +98,28 @@ def test_validation():
         book.market_order("buy", 0)
     with pytest.raises(ValueError):
         build_book(100.0, imbalance=1.5)
+
+def test_modify_keeps_queue_position():
+    book = LimitOrderBook()
+    first = book.add_limit("buy", 99.0, 100)
+    second = book.add_limit("buy", 99.0, 300)
+    book.modify(second.id, 500)
+    assert second.remaining == pytest.approx(500)
+    assert book.queue_ahead(second.id) == pytest.approx(100)   # 仍在 first 后面
+    assert book.level_qty("buy", 99.0) == pytest.approx(600)
+
+
+def test_modify_to_zero_cancels_and_rejects_below_filled():
+    book = LimitOrderBook()
+    order = book.add_limit("buy", 99.0, 100)
+    book.modify(order.id, 40)
+    assert order.remaining == pytest.approx(40)
+
+    book.modify(order.id, 0)                   # 数量 0 视为撤单
+    assert book.depth("buy") == 0.0
+
+    other = LimitOrderBook()
+    resting = other.add_limit("sell", 101.0, 100)
+    other.market_order("buy", 40)              # 吃掉 40，剩 60
+    with pytest.raises(ValueError, match="必须大于已成交量"):
+        other.modify(resting.id, 40)           # 不能改到已成交量以下
