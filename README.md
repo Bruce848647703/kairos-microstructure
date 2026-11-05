@@ -5,7 +5,7 @@
 > **从订单簿到执行成本**：限价订单簿（FIFO 队列）→ 走簿成本 → 平方根 / Kyle 冲击 →
 > Almgren-Chriss 最优轨迹 → 有效前沿 → 从成交数据还原 Roll 价差与 Kyle λ。
 
-零第三方依赖（`numpy` + 标准库），39 个测试 + GitHub Actions CI，固定种子可复现。
+零第三方依赖（`numpy` + 标准库），42 个测试 + GitHub Actions CI，固定种子可复现。
 
 ---
 
@@ -176,7 +176,7 @@ kairos_microstructure/
 ├── metrics.py    价差 / 失衡 / 微价格 / Roll / Amihud
 ├── data.py       合成成交与订单流
 └── cli.py        命令行
-tests/            39 个测试
+tests/            42 个测试
 examples/         4 个示例（含绘图）
 ```
 

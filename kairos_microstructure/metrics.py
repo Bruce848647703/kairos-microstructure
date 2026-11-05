@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import math
-from typing import Any, Optional, Sequence
+from typing import Optional, Sequence
 
 import numpy as np
 

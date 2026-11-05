@@ -11,7 +11,6 @@ from kairos_microstructure import (  # noqa: E402
     almgren_chriss,
     build_book,
     efficient_frontier,
-    twap,
 )
 
 PARAMS = dict(sigma=0.02, eta=0.01, gamma=0.001, adv=1_000_000, price=100.0)

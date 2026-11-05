@@ -103,3 +103,16 @@ def test_cli_book_execute_optimal(capsys):
     assert main(["optimal", "--shares", "100000", "--risk", "25"]) == 0
     out = capsys.readouterr().out
     assert "预期成本" in out
+
+
+def test_cli_version_and_top_level_help(capsys):
+    with pytest.raises(SystemExit) as exc:
+        main(["--version"])
+    assert exc.value.code == 0
+    assert capsys.readouterr().out.startswith("kairos-microstructure ")
+
+    with pytest.raises(SystemExit) as exc:
+        main(["--help"])
+    assert exc.value.code == 0
+    out = capsys.readouterr().out
+    assert all(name in out for name in ("demo", "book", "execute", "optimal", "calibrate"))

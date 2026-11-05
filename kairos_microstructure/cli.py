@@ -5,6 +5,7 @@ import argparse
 import sys
 from typing import List, Optional
 
+from . import __version__
 from .book import build_book
 from .data import synthetic_bounce, synthetic_kyle
 from .impact import (
@@ -21,6 +22,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="kairos-microstructure",
         description="市场微观结构：订单簿、平方根冲击、Almgren-Chriss 最优执行与微观指标。")
+    parser.add_argument("--version", action="version", version=f"kairos-microstructure {__version__}")
     sub = parser.add_subparsers(dest="command")
     sub.add_parser("demo", help="完整演示（默认）")
 
@@ -108,7 +110,7 @@ def _cmd_calibrate(args: argparse.Namespace) -> int:
         print(f"  日频波动(GK)    {result.sigma_intraday:>8.2%}")
         print(f"  OHLC 价差       {result.spread_ohlc_bps:>8.2f}bp（{result.spread_source}）")
     print(f"  Kyle λ          {result.kyle_lambda:>8.3e}（每 1×ADV）")
-    print(f"  ── 校准参数 ──")
+    print("  ── 校准参数 ──")
     print(f"  永久冲击 γ      {result.gamma:>8.4f}")
     print(f"  临时冲击 η      {result.eta:>8.4f}")
     print()
@@ -189,10 +191,12 @@ def _cmd_demo(_: argparse.Namespace) -> int:
 def main(argv: Optional[List[str]] = None) -> int:
     argv_list = list(sys.argv[1:] if argv is None else argv)
     parser = _build_parser()
-    if not argv_list or argv_list[0].startswith("-"):
-        args = parser.parse_args(["demo"] + argv_list)
-    else:
-        args = parser.parse_args(argv_list)
+    if not argv_list:
+        argv_list = ["demo"]
+    elif argv_list[0] not in ("-h", "--help", "--version") and argv_list[0].startswith("-"):
+        # 无子命令时默认跑 demo；但 -h/--help/--version 必须留给顶层解析器
+        argv_list = ["demo"] + argv_list
+    args = parser.parse_args(argv_list)
     command = args.command or "demo"
     return {
         "demo": _cmd_demo,

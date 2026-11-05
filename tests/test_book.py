@@ -105,7 +105,7 @@ def test_modify_keeps_queue_position():
     second = book.add_limit("buy", 99.0, 300)
     book.modify(second.id, 500)
     assert second.remaining == pytest.approx(500)
-    assert book.queue_ahead(second.id) == pytest.approx(100)   # 仍在 first 后面
+    assert book.queue_ahead(second.id) == pytest.approx(first.remaining)   # 仍在 first 后面
     assert book.level_qty("buy", 99.0) == pytest.approx(600)
 
 

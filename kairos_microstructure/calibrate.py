@@ -26,7 +26,6 @@ from .metrics import (
     abdi_ranaldo_spread,
     amihud_illiquidity,
     corwin_schultz_spread,
-    garman_klass_volatility,
     parkinson_volatility,
     roll_spread,
 )
